@@ -1,0 +1,98 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PracticalHUB | Admin Login</title>
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #080d18;
+            color: #eaf2ff;
+            font-family: Arial, sans-serif;
+        }
+
+        .login-box {
+            width: 90%;
+            max-width: 400px;
+            padding: 30px;
+            background: #111a2b;
+            border: 1px solid #263852;
+            border-radius: 16px;
+            box-shadow: 0 15px 40px #0005;
+        }
+
+        h1 { color: #55b8ff; }
+
+        label {
+            display: block;
+            margin: 16px 0 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #344762;
+            border-radius: 8px;
+            background: #080d18;
+            color: white;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 22px;
+            padding: 12px;
+            border: 0;
+            border-radius: 8px;
+            background: #1688e8;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .error { color: #ff9999; }
+        a { color: #55b8ff; }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h1>Admin Login</h1>
+        <p>PracticalHUB Administration Portal</p>
+
+        {% for message in messages %}
+            <p class="error">{{ message }}</p>
+        {% endfor %}
+
+        <form method="post">
+            {% csrf_token %}
+
+            <label for="username">Admin Username</label>
+            <input
+                type="text"
+                id="username"
+                name="username"
+                required
+            >
+
+            <label for="password">Password</label>
+            <input
+                type="password"
+                id="password"
+                name="password"
+                required
+            >
+
+            <button type="submit">Login as Admin</button>
+        </form>
+
+        <p><a href="{% url 'home' %}">Back to Home</a></p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,175 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#071225">
+
+    <title>PracticalHub | Learn. Practice. Grow.</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    {% include "header.html" %}
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-copy">
+                <p class="eyebrow">✦ WELCOME TO PRACTICALHUB</p>
+
+                <h1>
+                    Your Practical Files,<br>
+                    <span class="gradient-text">Just a Scan Away.</span>
+                </h1>
+
+                <p class="hero-description">
+                    Access your lab practicals, experiment files and study
+                    material with ease. Choose your branch, semester and
+                    subject to get started.
+                </p>
+
+                <div class="hero-features">
+                    <span><b class="blue">ϟ</b> Quick Access</span>
+                    <span><b class="green">◇</b> Secure &amp; Reliable</span>
+                    <span><b class="purple">▦</b> QR Code Supported</span>
+                </div>
+            </div>
+
+            <!-- Decorative Illustration -->
+            <div class="hero-art">
+                <div class="art-glow"></div>
+
+                <div class="book-stack">
+                    <div class="book book-blue">CSE</div>
+                    <div class="book book-green">AIML</div>
+                    <div class="book book-orange">CSIT</div>
+                    <div class="book book-purple">IT</div>
+                </div>
+
+                <div class="laptop">
+                    <div class="laptop-screen">
+                        <div class="screen-top">
+                            <span></span><span></span><span></span>
+                        </div>
+
+                        <div class="qr-art">▦</div>
+                        <p>Scan <span>&amp;</span> Open</p>
+                    </div>
+                    <div class="laptop-base"></div>
+                </div>
+
+                <div class="plant">
+                    <span class="leaf leaf-a"></span>
+                    <span class="leaf leaf-b"></span>
+                    <span class="leaf leaf-c"></span>
+                    <span class="pot"></span>
+                </div>
+
+                <div class="note-card">
+                    Better practicals<br>
+                    <strong>Better future.</strong>
+                </div>
+            </div>
+        </section>
+
+        <!-- Branch Selection -->
+        <section class="branch-section" id="branches">
+            <div class="section-heading">
+                <div class="heading-icon">▤</div>
+                <div>
+                    <h2>Select Your Branch</h2>
+                    <p>Choose your branch to access your practicals.</p>
+                </div>
+            </div>
+
+            <div class="branch-grid">
+                {% for branch in branches %}
+                    <a class="branch-card branch-color-{{ forloop.counter0|add:'0' }}"
+                       href="/branch/{{ branch.id }}/">
+
+                        <div class="branch-icon">
+                            {% if 'computer' in branch.name|lower or 'cse' in branch.code|lower %}
+                                ⌘
+                            {% elif 'mechanical' in branch.name|lower %}
+                                ⚙
+                            {% elif 'electrical' in branch.name|lower %}
+                                ϟ
+                            {% elif 'electronics' in branch.name|lower %}
+                                ⌁
+                            {% elif 'civil' in branch.name|lower %}
+                                ▥
+                            {% else %}
+                                ✧
+                            {% endif %}
+                        </div>
+
+                        <h3>{{ branch.name }}</h3>
+                        <span class="branch-code">{{ branch.code }}</span>
+                        <span class="card-arrow">↗</span>
+                    </a>
+
+                {% empty %}
+                    <div class="empty-state">
+                        <div class="empty-icon">▤</div>
+                        <h3>No branches added yet</h3>
+                        <p>
+                            Add your college branches through the
+                            Django admin panel.
+                        </p>
+                        <a href="/admin/" class="admin-link">
+                            Open Admin Panel ↗
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="benefits" id="about">
+            <article class="benefit">
+                <div class="benefit-icon benefit-blue">▤</div>
+                <div>
+                    <h3>Organized PDFs</h3>
+                    <p>All practicals in one place,<br>easy to find.</p>
+                </div>
+            </article>
+
+            <article class="benefit">
+                <div class="benefit-icon benefit-green">♢</div>
+                <div>
+                    <h3>Secure Access</h3>
+                    <p>Keep your study material<br>organized and accessible.</p>
+                </div>
+            </article>
+
+            <article class="benefit">
+                <div class="benefit-icon benefit-purple">▦</div>
+                <div>
+                    <h3>QR Code Linking</h3>
+                    <p>Scan and open the practical<br>you need.</p>
+                </div>
+            </article>
+
+            <article class="benefit">
+                <div class="benefit-icon benefit-orange">◷</div>
+                <div>
+                    <h3>Save Time</h3>
+                    <p>Less searching, more learning<br>with quick access.</p>
+                </div>
+            </article>
+        </section>
+    </main>
+
+    <footer class="site-footer" id="help">
+        <span>© {% now "Y" %} PracticalHub. All rights reserved by Satyam_Solanki.</span>
+        <span class="footer-motto">Learn / Practice / Grow</span>
+    </footer>
+
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>

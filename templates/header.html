@@ -1,0 +1,38 @@
+<header class="site-header">
+
+    <a href="{% url 'home' %}" class="brand">
+        <span class="brand-mark">✦</span>
+        <span>Practical<span class="brand-blue">Hub</span></span>
+    </a>
+
+    <nav class="nav-links">
+        <a href="{% url 'home' %}"
+           class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+            Home
+        </a>
+
+        <a href="{% url 'about' %}"
+           class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}">
+            About
+        </a>
+        <a href="{% url 'faculty_login' %}" class="nav-link">
+            Faculty 👨‍🏫
+        </a>
+        
+        <a href="{% url 'admin_login' %}" class="nav-link">Admin Login ⚜️</a>
+
+    </nav>
+
+    <div class="header-tag">
+        <span class="status-dot"></span>
+        Learn <i>/</i> Practice <i>/</i> Grow
+    </div>
+
+    <button class="menu-toggle"
+            type="button"
+            aria-label="Toggle navigation"
+            aria-expanded="false">
+        ☰
+    </button>
+
+</header>

@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ branch.name }} | PracticalHub</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+{% include "header.html" %}
+    <main>
+        <section class="branch-section" style="margin-top: 45px;">
+            <div class="section-heading">
+                <div class="heading-icon">▤</div>
+                <div>
+                    <h2>{{ branch.name }}</h2>
+                    <p>Select your semester to explore practicals.</p>
+                </div>
+            </div>
+
+            <div class="branch-grid">
+                {% for semester in semesters %}
+                    <a class="branch-card" href="/semester/{{ semester.id }}/">
+                        <div class="branch-icon">📚</div>
+                        <h3>Semester {{ semester.number }}</h3>
+                        <span class="branch-code">{{ branch.code }}</span>
+                        <span class="card-arrow">↗</span>
+                    </a>
+                {% empty %}
+                    <div class="empty-state">
+                        <h3>No semesters added yet</h3>
+                        <p>Add semesters for this branch through the admin panel.</p>
+                        <a href="/admin/" class="admin-link">Open Admin Panel ↗</a>
+                    </div>
+                {% endfor %}
+            </div>
+        </section>
+    </main>
+</body>
+</html>

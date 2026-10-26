@@ -1,0 +1,67 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ semester.branch.name }} - Semester {{ semester.number }} | PracticalHub</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+    {% include "header.html" %}
+
+    <main>
+        <section class="branch-section" style="margin-top: 45px;">
+
+            <div class="section-heading">
+                <div class="heading-icon">▤</div>
+                <div>
+                    <h2>{{ semester.branch.name }} — Semester {{ semester.number }}</h2>
+                    <p>Select a subject to explore its practicals.</p>
+                </div>
+            </div>
+
+            <div class="branch-grid">
+                {% for subject in subjects %}
+
+                    <a class="branch-card"
+                       href="/subject/{{ subject.id }}/">
+
+                        <div class="branch-icon">📚</div>
+
+                        <h3>{{ subject.name }}</h3>
+
+                        <span class="branch-code">
+                            {{ subject.code }}
+                        </span>
+
+                        <span class="card-arrow">↗</span>
+                    </a>
+
+                {% empty %}
+
+                    <div class="empty-state">
+                        <div class="empty-icon">📚</div>
+                        <h3>No subjects added yet</h3>
+                        <p>
+                            Subjects for this semester haven't been added yet.
+                        </p>
+                    </div>
+
+                {% endfor %}
+            </div>
+
+            <p style="margin-top: 25px;">
+                <a href="/branch/{{ semester.branch.id }}/">
+                    ← Back to Semesters
+                </a>
+            </p>
+
+        </section>
+    </main>
+
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>

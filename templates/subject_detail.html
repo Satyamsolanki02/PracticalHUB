@@ -1,0 +1,223 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ subject.name }} | PracticalHub</title>
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <style>
+        .practical-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 22px;
+            margin-top: 25px;
+        }
+
+        .practical-item {
+            padding: 22px;
+            border: 1px solid rgba(0, 220, 255, 0.25);
+            border-radius: 16px;
+            background: rgba(12, 22, 38, 0.85);
+            overflow-wrap: anywhere;
+        }
+
+        .practical-item h4 {
+            margin: 0 0 12px;
+            color: #eafaff;
+            font-size: 18px;
+        }
+
+        .practical-item p {
+            color: #a9bdcf;
+            margin: 8px 0;
+        }
+
+        .practical-qr {
+            display: block;
+            width: 160px;
+            height: 160px;
+            max-width: 100%;
+            object-fit: contain;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            margin: 18px auto;
+        }
+
+        .practical-actions {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .practical-action {
+            display: inline-block;
+            padding: 10px 16px;
+            border-radius: 8px;
+            background: #00d9ff;
+            color: #06111c;
+            text-decoration: none;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .qr-action {
+            background: transparent;
+            color: #00d9ff;
+            border: 1px solid #00d9ff;
+        }
+
+        .practical-action:hover {
+            opacity: 0.85;
+        }
+
+        .subject-meta {
+            color: #9bb0c5;
+            margin-top: 8px;
+        }
+
+        .pdf-link {
+            display: inline-block;
+            margin: 8px 0 12px;
+            color: #00d9ff;
+            text-decoration: none;
+        }
+
+        .empty-practicals {
+            padding: 25px;
+            border: 1px dashed #40536a;
+            border-radius: 12px;
+            color: #b4c4d5;
+        }
+    </style>
+</head>
+
+<body>
+
+    {% include "header.html" %}
+
+    <main>
+        <section class="branch-section" style="margin-top: 45px;">
+
+            <div class="section-heading">
+                <div class="heading-icon">📚</div>
+                <div>
+                    <h2>{{ subject.name }}</h2>
+
+                    <p class="subject-meta">
+                        Subject Code: {{ subject.code }}
+                    </p>
+
+                    <p>Open a practical directly or scan its QR code.</p>
+                </div>
+            </div>
+
+            {% for pdf in practical_pdfs %}
+
+                <div class="branch-card" style="margin-top: 25px;">
+
+                    <div class="branch-icon">📄</div>
+
+                    <h3>{{ pdf.title }}</h3>
+
+                    <p>{{ pdf.practicals.count }} practical(s)</p>
+
+                    <a class="pdf-link"
+                       href="{{ pdf.pdf_file.url }}"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                        Open Complete PDF ↗
+                    </a>
+
+                    <div class="practical-list">
+
+                        {% for practical in pdf.practicals.all %}
+
+                            <div class="practical-item">
+
+                                <h4>{{ practical.name }}</h4>
+
+                                <p>
+                                    Start Page: {{ practical.start_page }}
+                                </p>
+
+                                <img
+                                    class="practical-qr"
+                                    src="{% url 'practical_qr' practical.qr_token %}"
+                                    alt="QR code for {{ practical.name }}"
+                                    loading="lazy"
+                                >
+
+                                <p style="text-align: center;">
+                                    Scan to open this practical directly.
+                                </p>
+
+                                <div class="practical-actions">
+
+                                    <a
+                                        class="practical-action"
+                                        href="{% url 'practical_detail' practical.qr_token %}"
+                                        target="_blank"
+                                        rel="noopener noreferrer">
+                                        Open Practical ↗
+                                    </a>
+
+                                    <a
+                                        class="practical-action qr-action"
+                                        href="{% url 'practical_qr' practical.qr_token %}"
+                                        target="_blank"
+                                        rel="noopener noreferrer">
+                                        View QR Code ↗
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        {% empty %}
+
+                            <div class="empty-practicals">
+                                <h4>No practical entries yet</h4>
+                                <p>
+                                    This PDF is uploaded, but practical names
+                                    and starting page numbers have not been
+                                    saved yet. Add them through your existing
+                                    faculty upload process or Django admin.
+                                </p>
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+                </div>
+
+            {% empty %}
+
+                <div class="empty-state">
+                    <div class="empty-icon">📄</div>
+                    <h3>No PDFs uploaded yet</h3>
+                    <p>
+                        Practical PDFs for this subject will appear here
+                        after faculty uploads them.
+                    </p>
+                </div>
+
+            {% endfor %}
+
+            <p style="margin-top: 25px;">
+                <a href="javascript:history.back()">← Go Back</a>
+            </p>
+
+        </section>
+    </main>
+
+    <script src="{% static 'js/script.js' %}"></script>
+
+</body>
+</html>

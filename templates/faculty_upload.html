@@ -1,0 +1,430 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Upload | PracticalHUB</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <style>
+        .upload-container {
+            max-width: 750px;
+            margin: 45px auto;
+            padding: 28px;
+            border: 1px solid rgba(0, 220, 255, 0.3);
+            border-radius: 18px;
+            background: rgba(12, 22, 38, 0.96);
+            box-shadow: 0 0 30px rgba(0, 217, 255, 0.08);
+        }
+
+        .upload-container h1,
+        .upload-container h2 {
+            color: #eafaff;
+        }
+
+        .upload-container p {
+            color: #a9bdcf;
+            line-height: 1.6;
+        }
+
+        .upload-form p {
+            margin: 20px 0;
+        }
+
+        .upload-form label,
+        .review-form label {
+            display: block;
+            color: #d8e8f5;
+            margin-bottom: 8px;
+        }
+
+        .upload-form input,
+        .upload-form select,
+        .review-form input {
+            width: 100%;
+            padding: 12px;
+            box-sizing: border-box;
+            border: 1px solid #334b62;
+            border-radius: 8px;
+            background: #091522;
+            color: #ffffff;
+        }
+
+        .upload-button,
+        .save-button {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 8px;
+            background: #00d9ff;
+            color: #06111c;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .upload-button:hover,
+        .save-button:hover {
+            opacity: 0.85;
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            background: rgba(0, 217, 255, 0.12);
+            color: #00d9ff;
+            margin: 15px 0;
+        }
+
+        .form-errors {
+            display: block;
+            color: #ff8b8b;
+            font-size: 14px;
+        }
+
+        .scan-results {
+            margin-top: 35px;
+            padding-top: 20px;
+            border-top: 1px solid #334b62;
+        }
+
+        .scan-card {
+            padding: 18px;
+            margin: 15px 0;
+            border: 1px solid #334b62;
+            border-radius: 10px;
+            background: #091522;
+        }
+
+        .scan-card h3 {
+            color: #00d9ff;
+            margin-top: 0;
+        }
+
+        .review-form input {
+            margin-bottom: 16px;
+        }
+
+        .qr-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .qr-image {
+            display: block;
+            width: 160px;
+            height: 160px;
+            padding: 8px;
+            box-sizing: border-box;
+            background: #ffffff;
+            border-radius: 8px;
+        }
+
+        .qr-actions a {
+            display: inline-block;
+            margin: 8px 12px 0 0;
+            color: #00d9ff;
+            text-decoration: none;
+        }
+
+        .qr-actions a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .upload-container {
+                margin: 20px 12px;
+                padding: 18px;
+            }
+
+            .qr-card {
+                align-items: flex-start;
+            }
+
+            .qr-image {
+                width: 145px;
+                height: 145px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    {% include "header.html" %}
+
+    <main class="upload-container">
+        <h1>Faculty PDF Upload</h1>
+        <p>Upload practical PDFs for your students.</p>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
+        {% if review_error %}
+            <div class="form-errors">{{ review_error }}</div>
+        {% endif %}
+
+        <!-- PDF Upload Form -->
+        <form class="upload-form"
+              method="POST"
+              enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {{ form.non_field_errors }}
+
+            <p>
+                <label for="{{ form.branch.id_for_label }}">Branch</label>
+                {{ form.branch }}
+                <span class="form-errors">{{ form.branch.errors }}</span>
+            </p>
+
+            <p>
+                <label for="{{ form.semester.id_for_label }}">Semester</label>
+                {{ form.semester }}
+                <span class="form-errors">{{ form.semester.errors }}</span>
+            </p>
+
+            <p>
+                <label for="{{ form.subject.id_for_label }}">Subject</label>
+                {{ form.subject }}
+                <span class="form-errors">{{ form.subject.errors }}</span>
+            </p>
+
+            <p>
+                <label for="{{ form.title.id_for_label }}">PDF Title</label>
+                {{ form.title }}
+                <span class="form-errors">{{ form.title.errors }}</span>
+            </p>
+
+            <p>
+                <label for="{{ form.pdf_file.id_for_label }}">Select PDF</label>
+                {{ form.pdf_file }}
+                <span class="form-errors">{{ form.pdf_file.errors }}</span>
+            </p>
+
+            <button type="submit" class="upload-button">
+                Upload &amp; Scan PDF
+            </button>
+        </form>
+
+        <!-- Detected Practicals: Verify and Save -->
+        {% if uploaded_pdf %}
+            <section class="scan-results">
+                <h2>PDF Scan Results</h2>
+                <p>Uploaded PDF: {{ uploaded_pdf.title }}</p>
+
+                {% if detected_practicals %}
+                    <p>
+                        {{ detected_practicals|length }} possible practical(s)
+                        detected. Verify the names and starting pages.
+                    </p>
+
+                    <form method="POST" class="review-form">
+                        {% csrf_token %}
+
+                        <input type="hidden"
+                               name="action"
+                               value="save_practicals">
+
+                        <input type="hidden"
+                               name="pdf_id"
+                               value="{{ uploaded_pdf.id }}">
+
+                        <input type="hidden"
+                               name="form-TOTAL_FORMS"
+                               value="{{ detected_practicals|length }}">
+
+                        <input type="hidden"
+                               name="form-INITIAL_FORMS"
+                               value="0">
+
+                        <input type="hidden"
+                               name="form-MIN_NUM_FORMS"
+                               value="0">
+
+                        <input type="hidden"
+                               name="form-MAX_NUM_FORMS"
+                               value="1000">
+
+                        {% for practical in detected_practicals %}
+                            <div class="scan-card">
+                                <h3>Practical {{ forloop.counter }}</h3>
+
+                                <label for="name-{{ forloop.counter0 }}">
+                                    Practical Name
+                                </label>
+
+                                <input
+                                    id="name-{{ forloop.counter0 }}"
+                                    type="text"
+                                    name="form-{{ forloop.counter0 }}-name"
+                                    value="{{ practical.name }}"
+                                    maxlength="200"
+                                    required
+                                >
+
+                                <label for="page-{{ forloop.counter0 }}">
+                                    Starting Page
+                                </label>
+
+                                <input
+                                    id="page-{{ forloop.counter0 }}"
+                                    type="number"
+                                    name="form-{{ forloop.counter0 }}-start_page"
+                                    value="{{ practical.start_page }}"
+                                    min="1"
+                                    required
+                                >
+                            </div>
+                        {% endfor %}
+
+                        <button type="submit" class="save-button">
+                            Verify &amp; Save Practicals
+                        </button>
+                    </form>
+
+                {% else %}
+                    <p style="color: #ffcc80;">
+                        No practical headings detected. The PDF may use a
+                        different heading format or contain scanned images.
+                    </p>
+                {% endif %}
+            </section>
+        {% endif %}
+
+        <!-- Saved Practical QR Codes -->
+        {% if uploaded_pdf %}
+            {% with saved_practicals=uploaded_pdf.practicals.all %}
+                {% if saved_practicals %}
+                    <section class="scan-results">
+                        <h2>Generated Practical QR Codes</h2>
+                        <p>
+                            Har QR code ek specific practical ko open karta hai.
+                        </p>
+
+                        {% for practical in saved_practicals %}
+                            <div class="scan-card qr-card">
+                                <div style="flex: 1; min-width: 180px;">
+                                    <h3>{{ practical.name }}</h3>
+
+                                    <p>
+                                        Starting Page:
+                                        {{ practical.start_page }}
+                                    </p>
+
+                                    <div class="qr-actions">
+                                        <a
+                                            href="{% url 'practical_detail' practical.qr_token %}"
+                                            target="_blank">
+                                            Open Practical
+                                        </a>
+
+                                        <a
+                                            href="{% url 'practical_qr' practical.qr_token %}"
+                                            download="practical-{{ practical.id }}-qr.png">
+                                            Download QR
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <img
+                                        class="qr-image"
+                                        src="{% url 'practical_qr' practical.qr_token %}"
+                                        alt="QR code for {{ practical.name }}">
+
+                                    <p style="font-size: 12px;">
+                                        Scan to open
+                                    </p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </section>
+                {% endif %}
+            {% endwith %}
+        {% endif %}
+
+    </main>
+
+    <!-- Branch → Semester → Subject dropdowns -->
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const branchSelect = document.getElementById("id_branch");
+        const semesterSelect = document.getElementById("id_semester");
+        const subjectSelect = document.getElementById("id_subject");
+
+        if (!branchSelect || !semesterSelect || !subjectSelect) {
+            return;
+        }
+
+        function resetSelect(select, label) {
+            select.innerHTML = "";
+            select.add(new Option(label, ""));
+        }
+
+        branchSelect.addEventListener("change", async function () {
+            resetSelect(semesterSelect, "Loading semesters...");
+            resetSelect(subjectSelect, "Select Subject");
+
+            if (!this.value) {
+                resetSelect(semesterSelect, "Select Semester");
+                return;
+            }
+
+            try {
+                const response = await fetch(
+                    `/ajax/semesters/?branch_id=${encodeURIComponent(this.value)}`
+                );
+
+                if (!response.ok) {
+                    throw new Error("Could not load semesters");
+                }
+
+                const data = await response.json();
+                resetSelect(semesterSelect, "Select Semester");
+
+                data.semesters.forEach(function (item) {
+                    semesterSelect.add(new Option(item.name, item.id));
+                });
+            } catch (error) {
+                resetSelect(semesterSelect, "Could not load semesters");
+            }
+        });
+
+        semesterSelect.addEventListener("change", async function () {
+            resetSelect(subjectSelect, "Loading subjects...");
+
+            if (!this.value) {
+                resetSelect(subjectSelect, "Select Subject");
+                return;
+            }
+
+            try {
+                const response = await fetch(
+                    `/ajax/subjects/?semester_id=${encodeURIComponent(this.value)}`
+                );
+
+                if (!response.ok) {
+                    throw new Error("Could not load subjects");
+                }
+
+                const data = await response.json();
+                resetSelect(subjectSelect, "Select Subject");
+
+                data.subjects.forEach(function (item) {
+                    subjectSelect.add(new Option(item.name, item.id));
+                });
+            } catch (error) {
+                resetSelect(subjectSelect, "Could not load subjects");
+            }
+        });
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ practical.name }} | PracticalHUB</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            padding: 30px 16px;
+            background: #080d18;
+            color: #e8f0ff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 650px;
+            padding: 32px;
+            background: #111a2b;
+            border: 1px solid #263750;
+            border-radius: 18px;
+            text-align: center;
+            box-shadow: 0 15px 50px #0006;
+        }
+
+        .logo {
+            color: #38bdf8;
+            font-size: 14px;
+            letter-spacing: 3px;
+            font-weight: bold;
+        }
+
+        h1 {
+            margin: 22px 0 12px;
+            overflow-wrap: anywhere;
+        }
+
+        p {
+            color: #a9b9d2;
+            line-height: 1.7;
+        }
+
+        .page {
+            display: inline-block;
+            margin: 15px 0 25px;
+            padding: 10px 16px;
+            background: #1c2c43;
+            border-radius: 9px;
+            color: #7dd3fc;
+        }
+
+        .btn {
+            display: inline-block;
+            width: 100%;
+            padding: 15px 20px;
+            background: #38bdf8;
+            color: #06111d;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        .btn:hover {
+            background: #7dd3fc;
+        }
+
+        .back {
+            display: inline-block;
+            margin-top: 22px;
+            color: #a9b9d2;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="card">
+        <div class="logo">PRACTICALHUB</div>
+
+        <h1>{{ practical.name }}</h1>
+
+        <p>
+            Subject: {{ practical.pdf.subject.name }}<br>
+            PDF: {{ practical.pdf.title }}
+        </p>
+
+        <div class="page">
+            Starting Page: {{ page_number }}
+        </div>
+
+        <a class="btn" href="{{ pdf_url }}" target="_blank" rel="noopener">
+            Open Practical PDF
+        </a>
+
+        <a class="back" href="javascript:history.back()">
+            ← Go Back
+        </a>
+    </main>
+</body>
+</html>
